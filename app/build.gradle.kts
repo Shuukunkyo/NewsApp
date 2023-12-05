@@ -51,17 +51,25 @@ android {
 
 dependencies {
 
+    implementation("com.squareup.moshi:moshi-kotlin:1.9.3")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    //Retrofitライブラリを追加
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    //Compose関連のライブラリ:
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation ("androidx.compose.material:material:1.4.0")
     implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")
+    //BOMはComposeのバージョンを管理し、依存ライブラリとの互換性を確保します。
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    //Compose UI関連のライブラリとMaterial3コンポーネント。
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    //テスト関連
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
