@@ -15,22 +15,31 @@ import com.example.newsapp.R
 
 @Composable
 fun BottomMenu(navController: NavController){
-
+    //BottomMenu　navigationの各項目
     val menuItems = listOf(
         BottomMenuScreen.TopNews,
         BottomMenuScreen.Categories,
         BottomMenuScreen.Sources)
-    
+
+    //navigation各項目の構築
     BottomNavigation(contentColor = colorResource(id = (R.color.white))) {
+        // 現在のバックスタックエントリーを取得
         val navBackStackEntry by navController.currentBackStackEntryAsState()
+        // 現在のルートを取得
         val currentRoute = navBackStackEntry?.destination?.route
+        // メニューアイテムのリストを順に処理
         menuItems.forEach{
             BottomNavigationItem(
+                // ラベルとしてアイテムのタイトルを表示
                 label={ Text(text = it.title)},
                 alwaysShowLabel=true,
+                // 選択されたアイテムのテキストカラーを白に設定
                 selectedContentColor= Color.White,
+                // 選択されていないアイテムのテキストカラーをグレーに設定
                 unselectedContentColor= Color.Gray,
+                // 現在のルートがアイテムのルートと一致するかどうかで選択状態を設定
                 selected = currentRoute == it.route,
+                // アイテムがクリックされたときの処理
                 onClick = {
                           navController.navigate(it.route){
                               navController.graph.startDestinationRoute?.let {

@@ -16,7 +16,7 @@ object MockData {
             author ="Raja Razek CNN",
             title = "Tiger King' Joe Exotic says he has been diagnosed with aggressivedescription",
             description = "Joseph Maldonado, known as Joe Exotic on the 2020 Netflix",
-            publishedAt = "2023-12-01T05:35:21Z"
+            publishedAt = "2023-12-04T06:51:21Z"
         ),
          NewsData(
              2,
