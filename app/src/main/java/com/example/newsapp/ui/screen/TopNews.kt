@@ -1,6 +1,5 @@
 package com.example.newsapp.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,18 +16,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.newsapp.MockData
 import com.example.newsapp.MockData.getTimeAgo
-import com.example.newsapp.NewsData
+import com.example.newsapp.R
+import com.example.newsapp.models.TopNewsArticle
+import com.skydoves.landscapist.coil.CoilImage
 
 //TopNews一覧画面
 @Composable
-fun TopNews(navController: NavController) {
+fun TopNews(navController: NavController,articles:List<TopNewsArticle>) {
     Column(
         // 画面全体を覆うカラム
         modifier = Modifier.fillMaxWidth(),
@@ -38,18 +41,19 @@ fun TopNews(navController: NavController) {
         Text(text = "Top News", fontWeight = FontWeight.SemiBold)
         LazyColumn {
             //配列内のMockDataすべての情報を順番に表示します
-            items(MockData.topNewsList) { newsData ->
-                TopNewsItem(newsData = newsData, onNewsClick = {
-                    // newsItemムがクリックされた場合のnavigation
-                    navController.navigate("Detail/${newsData.id}")
-                })
+            items(articles.size) {
+                index ->
+                TopNewsItem(
+                    article = articles[index],
+                    onNewsClick = {navController.navigate("Detail/$index")}
+                )
             }
         }
     }
 }
 
 @Composable
-fun TopNewsItem(newsData: NewsData, onNewsClick: () -> Unit = {}) {
+fun TopNewsItem(article: TopNewsArticle, onNewsClick: () -> Unit = {}) {
     //newsItemを表示するBox
     Box(modifier = Modifier
         .height(200.dp)
@@ -57,10 +61,13 @@ fun TopNewsItem(newsData: NewsData, onNewsClick: () -> Unit = {}) {
         .clickable {
             onNewsClick()
         }) {
-        Image(
-            painter = painterResource(id = newsData.image), contentDescription = "",
-            contentScale = ContentScale.FillBounds
-        )
+        CoilImage(
+            imageModel = article.urlToImage,
+            contentScale = ContentScale.Crop,
+            error = ImageBitmap.imageResource(R.drawable.breaking_news),
+            placeHolder = ImageBitmap.imageResource(R.drawable.breaking_news),
+            )
+
         Column(
             modifier = Modifier
                 .wrapContentHeight()
@@ -72,13 +79,13 @@ fun TopNewsItem(newsData: NewsData, onNewsClick: () -> Unit = {}) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = MockData.stringToDate(newsData.publishedAt).getTimeAgo(),
+                text = MockData.stringToDate(article.publishedAt!!).getTimeAgo(),
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(80.dp))
             Text(
-                text = newsData.title,
+                text = article.title!!,
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold
             )
@@ -86,16 +93,13 @@ fun TopNewsItem(newsData: NewsData, onNewsClick: () -> Unit = {}) {
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun TopNewsPreview(){
-//    TopNewsItem(
-//        newsData = NewsData(
-//            2,
-//            author = "Zaja Razk CNN",
-//            title = "Tiger King' Joe Exotic says he has been diagnosed with aggressivedescription",
-//            description = "Joseph Maldonado, known as Joe Exotic on the 2020 Netflix",
-//            publishedAt = "2021 -11- 04 "
-//        )
-//    )
-//}
+@Preview(showBackground = true)
+@Composable
+fun TopNewsPreview(){
+        TopNewsItem(TopNewsArticle(
+            author = "Zaja Razk CNN",
+            title = "Tiger King' Joe Exotic says he has been diagnosed with aggressivedescription",
+            description = "Joseph Maldonado, known as Joe Exotic on the 2020 Netflix",
+            publishedAt = "2021 -11- 04 ")
+    )
+}

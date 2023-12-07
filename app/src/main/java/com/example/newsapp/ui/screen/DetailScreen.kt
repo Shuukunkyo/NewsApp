@@ -22,8 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,11 +37,13 @@ import com.example.newsapp.MockData
 import com.example.newsapp.MockData.getTimeAgo
 import com.example.newsapp.NewsData
 import com.example.newsapp.R
+import com.example.newsapp.models.TopNewsArticle
+import com.skydoves.landscapist.coil.CoilImage
 
 //News詳細画面
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DetailScreen(newsData: NewsData, scrollState: ScrollState, navController: NavController) {
+fun DetailScreen(article:TopNewsArticle, scrollState: ScrollState, navController: NavController) {
     // ScaffoldでtopBarを含む詳細画面を構築
     Scaffold(topBar = {
         DetailTopAppBar(onBackPressed = { navController.popBackStack() })
@@ -54,9 +59,11 @@ fun DetailScreen(newsData: NewsData, scrollState: ScrollState, navController: Na
             // 画面のタイトル
             Text(text = "Detail Screen", fontWeight = FontWeight.SemiBold)
             // ニュースの画像
-            Image(
-                painter = painterResource(id = newsData.image),
-                contentDescription = ""
+            CoilImage(
+                imageModel = article.urlToImage,
+                contentScale = ContentScale.Crop,
+                error = ImageBitmap.imageResource(R.drawable.breaking_news),
+                placeHolder = ImageBitmap.imageResource(R.drawable.breaking_news),
             )
             // 作者と投稿日時の表示
             Row(
@@ -65,14 +72,14 @@ fun DetailScreen(newsData: NewsData, scrollState: ScrollState, navController: Na
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                InfoWithIcon(Icons.Default.Edit, info = newsData.author)
+                InfoWithIcon(Icons.Default.Edit, info = article.author?:"Not Available")
                 InfoWithIcon(
                     Icons.Default.DateRange,
-                    info = MockData.stringToDate(newsData.publishedAt).getTimeAgo()
+                    info = MockData.stringToDate(article.publishedAt!!).getTimeAgo()
                 )
             }
-            Text(text = newsData.title, fontWeight = FontWeight.Bold)
-            Text(text = newsData.description, modifier = Modifier.padding(top = 16.dp))
+            Text(text = article.title?:"Not Available", fontWeight = FontWeight.Bold)
+            Text(text = article.description?:"Not Available", modifier = Modifier.padding(top = 16.dp))
         }
     }
 }
@@ -106,9 +113,7 @@ fun InfoWithIcon(icon: ImageVector, info: String) {
 @Composable
 fun DetailScreenPreview() {
     DetailScreen(
-        NewsData(
-            2,
-            image = R.drawable.mac_news,
+        TopNewsArticle(
             author = "Zaja Razk CNN",
             title = "Tiger King' Joe Exotic says he has been diagnosed with aggressivedescription",
             description = "Joseph Maldonado, known as Joe Exotic on the 2020 Netflix",

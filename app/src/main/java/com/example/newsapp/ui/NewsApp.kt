@@ -3,9 +3,12 @@ package com.example.newsapp.ui
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -16,6 +19,7 @@ import androidx.navigation.navArgument
 import com.example.newsapp.BottomMenuScreen
 import com.example.newsapp.MockData
 import com.example.newsapp.components.BottomMenu
+import com.example.newsapp.models.TopNewsArticle
 import com.example.newsapp.network.NewsManager
 import com.example.newsapp.ui.screen.Categories
 import com.example.newsapp.ui.screen.DetailScreen
@@ -43,44 +47,51 @@ fun MainScreen(navController: NavHostController,scrollState: ScrollState){
         },
     ) {
         // メインのコンテンツ領域(Navigation制御を含む)
-        Navigation(navController=navController, scrollState = scrollState)
+        Navigation(navController=navController,
+                    scrollState = scrollState,
+                    paddingValues = it)
     }
 }
 
 @Composable
 fun Navigation(navController: NavHostController,
                scrollState: ScrollState,
-               newsManager: NewsManager = NewsManager()){
-    val article = newsManager.newsResponse.value.articles
-    Log.d("news","$article")
-
-
-    // NavHostを作成し、開始目的地を "TopNews" に設定
-    NavHost(navController = navController,  startDestination = "TopNews" ){
-        // bottomNavigationに関連する composable 関数の設定
-        bottomNavigation(navController = navController)
-        // newsListページの composable 関数の設定
-        composable("TopNews"){
-            TopNews(navController = navController)
-        }
-        // news詳細ページの composable 関数の設定、(渡されたパラメータ newsId を含む)
-        composable("Detail/{newsId}",
-            arguments = listOf(navArgument("newsId"){type= NavType.IntType})
+               newsManager: NewsManager = NewsManager(),
+               paddingValues: PaddingValues
+){
+    val articles = newsManager.newsResponse.value.articles
+    Log.d("news","$articles")
+    articles?.let {
+        NavHost(navController = navController,
+                startDestination = BottomMenuScreen.TopNews.route,
+                modifier = Modifier.padding(paddingValues=paddingValues)
+        ){
+            // bottomNavigationに関連する composable 関数の設定
+            bottomNavigation(navController = navController,articles)
+            // news詳細ページの composable 関数の設定、(渡されたパラメータ newsId を含む)
+            composable("Detail/{index}",
+                arguments = listOf(navArgument("newsId"){type= NavType.IntType})
             ){
-            navBackStackEntry ->
-            // Navigationパラメータから newsId を取得し、その情報を使用してニュース詳細ページをレンダリング
-            val id = navBackStackEntry.arguments?.getInt("newsId")
-            val newsData = MockData.getNews(id)
-            DetailScreen(newsData,scrollState,navController)
+                    navBackStackEntry ->
+                // Navigationパラメータから newsId を取得し、その情報を使用してニュース詳細ページをレンダリング
+                val index = navBackStackEntry.arguments?.getInt("index")
+                index?.let {
+                    val article = articles[index]
+                    DetailScreen(article,scrollState,navController)
+                }
+            }
         }
     }
+
+    // NavHostを作成し、開始目的地を "TopNews" に設定
+
 
 }
 
 // NavGraphBuilderにbottomNavigationに関する composable 関数を追加
-fun NavGraphBuilder.bottomNavigation(navController: NavHostController){
+fun NavGraphBuilder.bottomNavigation(navController: NavHostController,articles:List<TopNewsArticle>){
     composable(BottomMenuScreen.TopNews.route){
-        TopNews(navController = navController)
+        TopNews(navController = navController,articles)
     }
     composable(BottomMenuScreen.Categories.route){
         Categories()
