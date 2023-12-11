@@ -17,7 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.newsapp.BottomMenuScreen
-import com.example.newsapp.MockData
 import com.example.newsapp.components.BottomMenu
 import com.example.newsapp.models.TopNewsArticle
 import com.example.newsapp.network.NewsManager
@@ -70,7 +69,7 @@ fun Navigation(navController: NavHostController,
             bottomNavigation(navController = navController,articles)
             // news詳細ページの composable 関数の設定、(渡されたパラメータ newsId を含む)
             composable("Detail/{index}",
-                arguments = listOf(navArgument("newsId"){type= NavType.IntType})
+                arguments = listOf(navArgument("index"){type= NavType.IntType})
             ){
                     navBackStackEntry ->
                 // Navigationパラメータから newsId を取得し、その情報を使用してニュース詳細ページをレンダリング

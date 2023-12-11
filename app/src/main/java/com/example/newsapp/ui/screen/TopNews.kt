@@ -32,6 +32,7 @@ import com.skydoves.landscapist.coil.CoilImage
 //TopNews一覧画面
 @Composable
 fun TopNews(navController: NavController,articles:List<TopNewsArticle>) {
+
     Column(
         // 画面全体を覆うカラム
         modifier = Modifier.fillMaxWidth(),
@@ -41,6 +42,7 @@ fun TopNews(navController: NavController,articles:List<TopNewsArticle>) {
         Text(text = "Top News", fontWeight = FontWeight.SemiBold)
         LazyColumn {
             //配列内のMockDataすべての情報を順番に表示します
+
             items(articles.size) {
                 index ->
                 TopNewsItem(
