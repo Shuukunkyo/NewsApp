@@ -66,7 +66,7 @@ fun Navigation(navController: NavHostController,
                 modifier = Modifier.padding(paddingValues=paddingValues)
         ){
             // bottomNavigationに関連する composable 関数の設定
-            bottomNavigation(navController = navController,articles)
+            bottomNavigation(navController = navController,articles,newsManager)
             // news詳細ページの composable 関数の設定、(渡されたパラメータ newsId を含む)
             composable("Detail/{index}",
                 arguments = listOf(navArgument("index"){type= NavType.IntType})
@@ -88,12 +88,21 @@ fun Navigation(navController: NavHostController,
 }
 
 // NavGraphBuilderにbottomNavigationに関する composable 関数を追加
-fun NavGraphBuilder.bottomNavigation(navController: NavHostController,articles:List<TopNewsArticle>){
+fun NavGraphBuilder.bottomNavigation(navController: NavHostController,
+                                     articles:List<TopNewsArticle>,
+                                     newsManager: NewsManager){
     composable(BottomMenuScreen.TopNews.route){
         TopNews(navController = navController,articles)
     }
     composable(BottomMenuScreen.Categories.route){
-        Categories()
+        newsManager.getArticlesByCategory("business")
+        newsManager.onSelectedCategoryChanged("business")
+
+
+        Categories(newsManager = newsManager, onFetchCategory = {
+            newsManager.onSelectedCategoryChanged(it)
+            newsManager.getArticlesByCategory(it)
+        })
     }
     composable(BottomMenuScreen.Sources.route){
         Sources()
