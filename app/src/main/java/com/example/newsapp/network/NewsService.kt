@@ -14,13 +14,15 @@ interface NewsService {
     //总体而言，这接口定义了一个获取头条新闻的网络请求方法，
     //其中包括国家和 API 密钥作为查询参数，并且期望服务器响应的数据格式符合 TopNewsResponse 类型。
     @GET("top-headlines")
-    fun getTopArticles(@Query("country") country:String,
-                       @Query("apiKey")apiKey:String
+    fun getTopArticles(@Query("country") country:String
                        ): Call<TopNewsResponse>
 
     @GET("top-headlines")
-    fun getArticlesByCategory(@Query("category") category:String,
-                              @Query("apiKey")apiKey: String
-    ):Call<TopNewsResponse>
+    fun getArticlesByCategory(@Query("category") category:String
+                        ):Call<TopNewsResponse>
+
+    @GET("everything")
+    fun getArticlesBySources(@Query("sources")source:String
+                        ):Call<TopNewsResponse>
 
 }
