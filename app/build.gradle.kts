@@ -51,6 +51,9 @@ android {
 
 dependencies {
 
+//    implementation ("androidx.compose.runtime:runtime-*:1.4.0-alpha03")
+
+
     implementation("com.squareup.okhttp3:logging-interceptor:4.7.2")
 
     implementation("com.github.skydoves:landscapist-coil:1.4.1")
